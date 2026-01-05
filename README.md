@@ -36,3 +36,31 @@ Aplikasi berbasis web untuk manajemen data pelanggan dan distribusi logistik Dep
    ```bash
    git clone [https://github.com/username-kamu/depo-asyifa.git](https://github.com/username-kamu/depo-asyifa.git)
    cd depo-asyifa
+2. **Buat Virtual Environment**
+
+Bash
+
+python -m venv venv
+# Windows:
+venv\Scripts\activate
+# Mac/Linux:
+source venv/bin/activate
+
+
+3. **Install Dependencies**
+
+Bash
+
+pip install -r requirements.txt
+
+
+4. **Migrasi Database & Run Server**
+
+Bash
+
+python manage.py migrate
+python manage.py runserver
+Akses Aplikasi Buka browser di http://127.0.0.1:8000/
+
+
+Developed by Putra | Mahasiswa S1 Teknik Informatika UMKT
