@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Input Data Kurir</title>
+    <style>
+        body { font-family: sans-serif; background-color: #f4f4f4; padding: 20px; }
+        .container { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); max-width: 500px; margin: auto; }
+        h2 { text-align: center; color: #2c3e50; }
+        
+        label { display: block; margin-top: 15px; font-weight: bold; }
+        input, textarea { width: 100%; padding: 10px; margin-top: 5px; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        
+        /* Tombol Lokasi */
+        .btn-lokasi {
+            background-color: #3498db; color: white; border: none; padding: 12px; width: 100%;
+            border-radius: 5px; font-size: 1rem; cursor: pointer; margin-top: 10px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        
+        /* Tombol Simpan */
+        .btn-simpan {
+            background-color: #27ae60; color: white; border: none; padding: 15px; width: 100%;
+            border-radius: 5px; font-size: 1.1rem; font-weight: bold; cursor: pointer; margin-top: 20px;
+        }
+
+        .status-lokasi { text-align: center; margin-top: 10px; color: #7f8c8d; font-size: 0.9rem; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>🚚 Input Pelanggan Baru</h2>
+    
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <label>Nama Pelanggan:</label>
+        <input type="text" name="nama" required placeholder="Contoh: Pak Budi">
+
+        <label>No HP/WA:</label>
+        <input type="tel" name="no_hp" placeholder="08xxxxxxxx">
+
+        <label>Alamat Singkat:</label>
+        <textarea name="alamat" rows="3" placeholder="Patokan, warna pagar, dll"></textarea>
+
+        <label>Titik Lokasi:</label>
+        <button type="button" class="btn-lokasi" onclick="ambilLokasi()">
+            📍 Ambil Lokasi Saya Saat Ini
+        </button>
+        <div id="status" class="status-lokasi">Belum ambil lokasi</div>
+        
+        <input type="hidden" id="lat" name="latitude">
+        <input type="hidden" id="lng" name="longitude">
+
+        <label>Foto Depo/Rumah:</label>
+        <input type="file" name="foto_lokasi" accept="image/*" capture="camera">
+
+        <button type="submit" class="btn-simpan">💾 SIMPAN DATA</button>
+    </form>
+</div>
+
+<script>
+    function ambilLokasi() {
+        const status = document.getElementById('status');
+        const latInput = document.getElementById('lat');
+        const lngInput = document.getElementById('lng');
+
+        if (!navigator.geolocation) {
+            status.innerHTML = "❌ Browser tidak support GPS";
+            return;
+        }
+
+        status.innerHTML = "⏳ Sedang mencari titik akurat...";
+
+        // Minta lokasi dengan Akurasi Tinggi (High Accuracy)
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const lat = position.coords.latitude;
+                const lng = position.coords.longitude;
+                const akurasi = position.coords.accuracy;
+
+                latInput.value = lat;
+                lngInput.value = lng;
+                
+                status.innerHTML = `✅ Lokasi Ditemukan!<br>Akurasi: ${akurasi.toFixed(0)} meter`;
+                status.style.color = "green";
+            },
+            () => {
+                status.innerHTML = "❌ Gagal ambil lokasi. Pastikan GPS nyala.";
+                status.style.color = "red";
+            },
+            {
+                enableHighAccuracy: true, // Wajib ON biar akurat
+                timeout: 10000,
+                maximumAge: 0
+            }
+        );
+    }
+</script>
+
+</body>
+</html>
